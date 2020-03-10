@@ -1,6 +1,5 @@
 import React from "react";
-import { Table, Button, Container, Row, Col } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
+import { Table, Button, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -18,23 +17,21 @@ class clubProfile extends React.Component {
   }
 
   fetchClubProfile = () => {
-    if (this.props.location.clubId) {
-      axios
-        .get(
-          `http://api.football-data.org/v2/teams/${this.props.location.clubId}`,
-          {
-            headers: {
-              "X-Auth-Token": "11b41dad4b1848968a2213d2e220c3d7"
-            }
-          }
-        )
-        .then(response => {
-          this.setState({ data: response.data });
-        });
-    } else {
-      this.props.history.push("/team");
-    }
+    axios
+      .get(`http://api.football-data.org/v2/teams/${this.props.team.id}`, {
+        headers: {
+          "X-Auth-Token": "11b41dad4b1848968a2213d2e220c3d7"
+        }
+      })
+      .then(response => {
+        this.setState({ data: response.data });
+      });
   };
+
+  pushToStack = data => {
+    this.props.pushToStack(data);
+  };
+
   render() {
     let data = this.state.data;
 
@@ -45,7 +42,7 @@ class clubProfile extends React.Component {
             <Row>
               <Col lg={4}>
                 <div>
-                  <img src={data.crestUrl}></img>
+                  <img alt={data.name} src={data.crestUrl}></img>
                 </div>
               </Col>
               <Col lg={8}>
@@ -67,7 +64,6 @@ class clubProfile extends React.Component {
                       <th>#</th>
                       <th>Name</th>
                       <th>Position</th>
-                      <th>Nationality</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -78,13 +74,17 @@ class clubProfile extends React.Component {
                           <td>{data.id}</td>
                           <td>{data.name}</td>
                           <td>{data.position}</td>
-                          <td>{data.nationality}</td>
                           <td>
-                            <Link to={{ pathname: "/team", areaId: data }}>
-                              <Button>
-                                <FontAwesomeIcon icon={faSearch} />
-                              </Button>
-                            </Link>
+                            <Button
+                              onClick={() =>
+                                this.pushToStack({
+                                  id: data.id,
+                                  name: data.name
+                                })
+                              }
+                            >
+                              <FontAwesomeIcon icon={faSearch} />
+                            </Button>
                           </td>
                         </tr>
                       );

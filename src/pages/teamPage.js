@@ -1,6 +1,5 @@
 import React from "react";
 import { Table, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -18,42 +17,29 @@ class teamPage extends React.Component {
   }
 
   fetchTeam = () => {
-    if (this.props.location.areaId) {
-      axios
-        .get(
-          `http://api.football-data.org/v2/teams?areas=${this.props.location.areaId.id}`,
-          {
-            headers: {
-              "X-Auth-Token": "11b41dad4b1848968a2213d2e220c3d7"
-            }
-          }
-        )
-        .then(response => {
-          this.setState({ data: response.data.teams });
-        });
-    } else {
-      axios
-        .get(`http://api.football-data.org/v2/teams`, {
+    axios
+      .get(
+        `http://api.football-data.org/v2/teams?areas=${this.props.area.id}`,
+        {
           headers: {
             "X-Auth-Token": "11b41dad4b1848968a2213d2e220c3d7"
           }
-        })
-        .then(response => {
-          this.setState({ data: response.data.teams });
-        });
-    }
+        }
+      )
+      .then(response => {
+        this.setState({ data: response.data.teams });
+      });
+  };
+
+  pushToStack = data => {
+    this.props.pushToStack(data);
   };
 
   render() {
     return (
       <>
         <div>
-          <h1>
-            Team on{" "}
-            {this.props.location.areaId
-              ? "area " + this.props.location.areaId.name
-              : "all area"}
-          </h1>
+          <h1>Team on {this.props.area && "area " + this.props.area.name}</h1>
         </div>
         <Table striped bordered hover>
           <thead>
@@ -78,11 +64,13 @@ class teamPage extends React.Component {
                   <td>{data.website}</td>
                   <td>{data.email}</td>
                   <td>
-                    <Link to={{ pathname: "/club", clubId: data.id }}>
-                      <Button>
-                        <FontAwesomeIcon icon={faSearch} />
-                      </Button>
-                    </Link>
+                    <Button
+                      onClick={() =>
+                        this.pushToStack({ id: data.id, name: data.name })
+                      }
+                    >
+                      <FontAwesomeIcon icon={faSearch} />
+                    </Button>
                   </td>
                 </tr>
               );

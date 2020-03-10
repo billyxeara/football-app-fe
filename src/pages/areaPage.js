@@ -1,6 +1,5 @@
 import React from "react";
 import { Table, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -29,6 +28,10 @@ class areaPage extends React.Component {
       });
   };
 
+  pushToStack = data => {
+    this.props.pushToStack(data);
+  };
+
   render() {
     return (
       <Table striped bordered hover>
@@ -48,11 +51,13 @@ class areaPage extends React.Component {
                 <td>{data.name}</td>
                 <td>{data.countryCode}</td>
                 <td>
-                  <Link to={{ pathname: "/team", areaId: data }}>
-                    <Button>
-                      <FontAwesomeIcon icon={faSearch} />
-                    </Button>
-                  </Link>
+                  <Button
+                    onClick={() =>
+                      this.pushToStack({ id: data.id, name: data.name })
+                    }
+                  >
+                    <FontAwesomeIcon icon={faSearch} />
+                  </Button>
                 </td>
               </tr>
             );
