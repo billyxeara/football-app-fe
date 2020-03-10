@@ -78,7 +78,7 @@ class teamPage extends React.Component {
                   <td>{data.website}</td>
                   <td>{data.email}</td>
                   <td>
-                    <Link to="#">
+                    <Link to={{ pathname: "/club", clubId: data.id }}>
                       <Button>
                         <FontAwesomeIcon icon={faSearch} />
                       </Button>
