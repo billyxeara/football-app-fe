@@ -1,4 +1,5 @@
 import React from "react";
+import PlayerProfilePage from "./playerProfilePage";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -8,7 +9,9 @@ class clubProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: undefined
+      data: undefined,
+      id: undefined,
+      showModal: false
     };
   }
 
@@ -28,8 +31,12 @@ class clubProfile extends React.Component {
       });
   };
 
-  pushToStack = data => {
-    this.props.pushToStack(data);
+  handleModal = action => {
+    if (action.status === true) {
+      this.setState({ id: action.id, showModal: action.status });
+    } else {
+      this.setState({ showModal: action });
+    }
   };
 
   render() {
@@ -37,13 +44,11 @@ class clubProfile extends React.Component {
 
     return (
       <>
-        {this.state.data && (
+        {data !== undefined ? (
           <>
             <Row>
               <Col lg={4}>
-                <div>
-                  <img alt={data.name} src={data.crestUrl}></img>
-                </div>
+                <img alt={data.name} src={data.crestUrl}></img>
               </Col>
               <Col lg={8}>
                 <h4>Name: {data.name}</h4>
@@ -77,10 +82,7 @@ class clubProfile extends React.Component {
                           <td>
                             <Button
                               onClick={() =>
-                                this.pushToStack({
-                                  id: data.id,
-                                  name: data.name
-                                })
+                                this.handleModal({ status: true, id: data.id })
                               }
                             >
                               <FontAwesomeIcon icon={faSearch} />
@@ -94,6 +96,16 @@ class clubProfile extends React.Component {
               </Col>
             </Row>
           </>
+        ) : (
+          ""
+        )}
+
+        {this.state.showModal && (
+          <PlayerProfilePage
+            id={this.state.id}
+            modalStatus={this.state.showModal}
+            closeModal={this.handleModal}
+          />
         )}
       </>
     );
